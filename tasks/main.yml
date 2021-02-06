@@ -87,30 +87,6 @@
 - name: force all notified handlers to run
   meta: flush_handlers
 
-- name: set group owner
-  file:
-    path: "{{ item }}"
-    group: "{{ postfix_group }}"
-    mode: "0755"
-  loop:
-    - /usr/sbin/postqueue
-    - /usr/sbin/postdrop
-    - /var/spool/postfix/public
-    - /var/spool/postfix/maildrop
-
-- name: place selinux type enforcement
-  copy:
-    src: my-postfix.te
-    dest: /etc/my-postfix.te
-    mode: "0644"
-  notify:
-    - create selinux mod for postfix
-    - create selinux pp for postfix
-    - load selinux pp for postfix
-  when:
-    - ansible_selinux.status is defined
-    - ansible_selinux.status == "enabled"
-
 - name: start and enable postfix
   service:
     name: "{{ postfix_service }}"
